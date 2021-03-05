@@ -120,30 +120,39 @@ build_kmods() {
 
 load_kmods() {
     echo "Loading kernel modules using the kernel module container..."
-    for module in ${KMOD_NAMES}; do
+    if [ ! -f /usr/bin/dracut ]; then
+      touch /usr/bin/dracut
+    fi
+    chmod +x /usr/bin/dracut
 
-        kabi_check_module ${module}.ko
-
-        if is_kmod_loaded ${module}; then
-            echo "Kernel module ${module} already loaded"
-        else
-            module=${module//-/_} # replace any dashes with underscore
-            # TODO kvc_c_run --privileged $IMAGE modprobe ${module}
-            modprobe ${module}
-        fi
-    done
+    module="lustre"
+    if is_kmod_loaded ${module}; then
+        echo "Kernel module ${module} already loaded"
+    else
+        find /lib/modules/*/extra/lustre-client | grep .ko | weak-modules --add-modules --verbose --no-initramfs
+        modprobe -v lnet
+        modprobe -v ksocklnd
+        modprobe -v mgc
+        modprobe -v osc
+        lnetctl lnet configure --all
+        modprobe -v lustre
+    fi
 }
 
 unload_kmods() {
     echo "Unloading kernel modules..."
-    for module in ${KMOD_NAMES}; do
-        if is_kmod_loaded ${module}; then
-            module=${module//-/_} # replace any dashes with underscore
-            rmmod "${module}"
-        else
-            echo "Kernel module ${module} already unloaded"
-        fi
-    done
+    module="lustre"
+    if is_kmod_loaded ${module}; then
+        modprobe -r lustre
+        modprobe -r osc
+        modprobe -r mgc
+        lnetctl lnet unconfigure
+        modprobe -r ksocklnd
+        modprobe -r lnet
+        lustre_rmmod
+    else
+        echo "Kernel module ${module} already unloaded"
+    fi
 }
 
 wrapper() {
