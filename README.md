@@ -1,6 +1,6 @@
-# kvc-simple-kmod
+# kvc-lustre-client
 
 This is a [kmods-via-containers](https://github.com/kmods-via-containers/kmods-via-containers)
-implementation for the [simple-kmod](https://github.com/kmods-via-containers/simple-kmod)
-example. A full example of how to apply it is documented in the
-[kmods-via-containers README](https://github.com/kmods-via-containers/kmods-via-containers#example).
+implementation for the lustre-client kernel module built by AWS for AWS FSx for Lustre. This is meant to be used by
+[Special Resource Operator](https://github.com/openshift-psap/special-resource-operator) to use the Lustre filesystem
+on OpenShift, with the AWS FSx CSI driver.
