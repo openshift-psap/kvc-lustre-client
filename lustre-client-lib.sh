@@ -129,7 +129,7 @@ load_kmods() {
     if is_kmod_loaded ${module}; then
         echo "Kernel module ${module} already loaded"
     else
-        KO_FILES=$(find /lib/modules/*/extra/lustre-client -name -type f -name "*.ko")
+        KO_FILES=$(find /lib/modules/*/extra/lustre-client -type f -name "*.ko")
         weak_modules_add
         modprobe -v lnet
         modprobe -v ksocklnd
