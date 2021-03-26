@@ -129,8 +129,8 @@ load_kmods() {
     if is_kmod_loaded ${module}; then
         echo "Kernel module ${module} already loaded"
     else
-	kabi_check_module ${module}
-        find /lib/modules/*/extra/lustre-client | grep .ko | weak-modules --add-modules --verbose --no-initramfs
+        KO_FILES=$(find /lib/modules/*/extra/lustre-client -name -type f -name "*.ko")
+        weak_modules_add
         modprobe -v lnet
         modprobe -v ksocklnd
         modprobe -v mgc
